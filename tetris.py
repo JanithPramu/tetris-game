@@ -147,3 +147,45 @@ TETROMINOES = {
     ]
 
 }
+ 
+ TETROMINO_COLORS = {
+    'I': CYAN,
+    'O': YELLOW,
+    'T': PURPLE,
+    'S': GREEN,
+    'Z': RED,
+    'J': BLUE,
+    'L': ORANGE
+}
+
+class Tetromino:
+    def __init__(self, shape, color):
+        self.shape = shape
+        self.color = color
+        self.x = GRID_WIDTH // 2 - 2
+        self.y = 0
+        self.rotation = 0
+        
+    def get_rotated_shape(self):
+        return TETROMINOES[self.shape][self.rotation % len(TETROMINOES[self.shape])]
+    
+    def get_cells(self):
+        cells = []
+        shape = self.get_rotated_shape()
+        for i, row in enumerate(shape):
+            for j, cell in enumerate(row):
+                if cell == '#':
+                    cells.append((self.x + j, self.y + i))
+        return cells
+
+class TetrisGame:
+    def __init__(self):
+        self.grid = [[BLACK for _ in range(GRID_WIDTH)] for _ in range(GRID_HEIGHT)]
+        self.current_piece = self.get_new_piece()
+        self.next_piece = self.get_new_piece()
+        self.score = 0
+        self.level = 1
+        self.lines_cleared = 0
+        self.fall_time = 0
+        self.fall_speed = 500  # milliseconds
+        self.game_over = False
