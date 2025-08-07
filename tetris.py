@@ -189,3 +189,30 @@ class TetrisGame:
         self.fall_time = 0
         self.fall_speed = 500  # milliseconds
         self.game_over = False
+
+    def get_new_piece(self):
+        shape = random.choice(list(TETROMINOES.keys()))
+        return Tetromino(shape, TETROMINO_COLORS[shape])
+    
+    def is_valid_position(self, piece, dx=0, dy=0, rotation=None):
+        if rotation is None:
+            rotation = piece.rotation
+            
+        # Temporarily change piece position and rotation
+        old_x, old_y, old_rotation = piece.x, piece.y, piece.rotation
+        piece.x += dx
+        piece.y += dy
+        piece.rotation = rotation
+        
+        # Check if position is valid
+        cells = piece.get_cells()
+        valid = True
+        
+        for x, y in cells:
+            if x < 0 or x >= GRID_WIDTH or y >= GRID_HEIGHT:
+                valid = False
+                break
+            if y >= 0 and self.grid[y][x] != BLACK:
+                valid = False
+                break
+                
