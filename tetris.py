@@ -274,3 +274,19 @@ class TetrisGame:
         while self.is_valid_position(self.current_piece, dy=1):
             self.current_piece.y += 1
         self.score += 2
+    
+def draw_grid(screen, game):
+    # Draw grid background
+    grid_rect = pygame.Rect(GRID_X_OFFSET, GRID_Y_OFFSET, 
+                           GRID_WIDTH * CELL_SIZE, GRID_HEIGHT * CELL_SIZE)
+    pygame.draw.rect(screen, WHITE, grid_rect)
+    pygame.draw.rect(screen, GRAY, grid_rect, 2)
+    
+    # Draw placed pieces
+    for y in range(GRID_HEIGHT):
+        for x in range(GRID_WIDTH):
+            if game.grid[y][x] != BLACK:
+                rect = pygame.Rect(GRID_X_OFFSET + x * CELL_SIZE + 1,
+                                 GRID_Y_OFFSET + y * CELL_SIZE + 1,
+                                 CELL_SIZE - 2, CELL_SIZE - 2)
+                pygame.draw.rect(screen, game.grid[y][x], rect)
