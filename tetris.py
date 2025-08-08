@@ -215,4 +215,62 @@ class TetrisGame:
             if y >= 0 and self.grid[y][x] != BLACK:
                 valid = False
                 break
+
+ # Restore original position and rotation
+        piece.x, piece.y, piece.rotation = old_x, old_y, old_rotation
+        return valid
+    
+    def place_piece(self, piece):
+        cells = piece.get_cells()
+        for x, y in cells:
+            if y >= 0:
+                self.grid[y][x] = piece.color
+    
+    def clear_lines(self):
+        lines_to_clear = []
+        for y in range(GRID_HEIGHT):
+            if all(cell != BLACK for cell in self.grid[y]):
+                lines_to_clear.append(y)
+        
+        for y in lines_to_clear:
+            del self.grid[y]
+            self.grid.insert(0, [BLACK for _ in range(GRID_WIDTH)])
+        
+        lines_cleared = len(lines_to_clear)
+        if lines_cleared > 0:
+            self.lines_cleared += lines_cleared
+            self.score += lines_cleared * 100 * self.level
+            self.level = self.lines_cleared // 10 + 1
+            self.fall_speed = max(50, 500 - (self.level - 1) * 50)
+    
+    def update(self, dt):
+        if self.game_over:
+            return
+            
+        self.fall_time += dt
+        if self.fall_time >= self.fall_speed:
+            self.fall_time = 0
+            if self.is_valid_position(self.current_piece, dy=1):
+                self.current_piece.y += 1
+            else:
+                self.place_piece(self.current_piece)
+                self.clear_lines()
+                self.current_piece = self.next_piece
+                self.next_piece = self.get_new_piece()
                 
+                if not self.is_valid_position(self.current_piece):
+                    self.game_over = True
+    
+    def move_piece(self, dx):
+        if self.is_valid_position(self.current_piece, dx=dx):
+            self.current_piece.x += dx
+    
+    def rotate_piece(self):
+        new_rotation = (self.current_piece.rotation + 1) % len(TETROMINOES[self.current_piece.shape])
+        if self.is_valid_position(self.current_piece, rotation=new_rotation):
+            self.current_piece.rotation = new_rotation
+    
+    def drop_piece(self):
+        while self.is_valid_position(self.current_piece, dy=1):
+            self.current_piece.y += 1
+        self.score += 2
