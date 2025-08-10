@@ -316,3 +316,68 @@ def draw_next_piece(screen, piece):
             if cell == '#':
                 rect = pygame.Rect(next_x + j * 20, next_y + i * 20, 18, 18)
                 pygame.draw.rect(screen, piece.color, rect)
+def draw_info(screen, game):
+    info_x = GRID_X_OFFSET + GRID_WIDTH * CELL_SIZE + 20
+    info_y = GRID_Y_OFFSET + 150
+    
+    font = pygame.font.Font(None, 36)
+    
+    score_text = font.render(f"Score: {game.score}", True, WHITE)
+    level_text = font.render(f"Level: {game.level}", True, WHITE)
+    lines_text = font.render(f"Lines: {game.lines_cleared}", True, WHITE)
+    
+    screen.blit(score_text, (info_x, info_y))
+    screen.blit(level_text, (info_x, info_y + 40))
+    screen.blit(lines_text, (info_x, info_y + 80))
+    
+    if game.game_over:
+        game_over_text = font.render("GAME OVER", True, RED)
+        restart_text = font.render("Press R to restart", True, WHITE)
+        screen.blit(game_over_text, (info_x, info_y + 120))
+        screen.blit(restart_text, (info_x, info_y + 160))
+
+def main():
+    screen = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
+    pygame.display.set_caption("Tetris")
+    clock = pygame.time.Clock()
+    
+    game = TetrisGame()
+    
+    while True:
+        dt = clock.tick(60)
+        
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            
+            elif event.type == pygame.KEYDOWN:
+                if game.game_over:
+                    if event.key == pygame.K_r:
+                        game = TetrisGame()
+                else:
+                    if event.key == pygame.K_LEFT or event.key == pygame.K_a:
+                        game.move_piece(-1)
+                    elif event.key == pygame.K_RIGHT or event.key == pygame.K_d:
+                        game.move_piece(1)
+                    elif event.key == pygame.K_DOWN or event.key == pygame.K_s:
+                        game.fall_time = game.fall_speed  # Force immediate drop
+                    elif event.key == pygame.K_UP or event.key == pygame.K_w:
+                        game.rotate_piece()
+                    elif event.key == pygame.K_SPACE:
+                        game.drop_piece()
+        
+        game.update(dt)
+        
+        screen.fill(BLACK)
+        draw_grid(screen, game)
+        
+        if not game.game_over:
+            draw_next_piece(screen, game.next_piece)
+        
+        draw_info(screen, game)
+        
+        pygame.display.flip()
+
+if __name__ == "__main__":
+    main()
