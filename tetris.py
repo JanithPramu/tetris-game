@@ -290,3 +290,29 @@ def draw_grid(screen, game):
                                  GRID_Y_OFFSET + y * CELL_SIZE + 1,
                                  CELL_SIZE - 2, CELL_SIZE - 2)
                 pygame.draw.rect(screen, game.grid[y][x], rect)
+
+    # Draw current piece
+    if not game.game_over:
+        cells = game.current_piece.get_cells()
+        for x, y in cells:
+            if 0 <= x < GRID_WIDTH and y >= 0:
+                rect = pygame.Rect(GRID_X_OFFSET + x * CELL_SIZE + 1,
+                                 GRID_Y_OFFSET + y * CELL_SIZE + 1,
+                                 CELL_SIZE - 2, CELL_SIZE - 2)
+                pygame.draw.rect(screen, game.current_piece.color, rect)
+
+def draw_next_piece(screen, piece):
+    # Draw next piece preview
+    next_x = GRID_X_OFFSET + GRID_WIDTH * CELL_SIZE + 20
+    next_y = GRID_Y_OFFSET + 50
+    
+    font = pygame.font.Font(None, 36)
+    text = font.render("Next:", True, WHITE)
+    screen.blit(text, (next_x, next_y - 30))
+    
+    shape = piece.get_rotated_shape()
+    for i, row in enumerate(shape):
+        for j, cell in enumerate(row):
+            if cell == '#':
+                rect = pygame.Rect(next_x + j * 20, next_y + i * 20, 18, 18)
+                pygame.draw.rect(screen, piece.color, rect)
