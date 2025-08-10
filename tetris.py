@@ -27,7 +27,7 @@ PURPLE = (128, 0, 128)
 CYAN = (0, 255, 255)
 GRAY = (128, 128, 128)
 
-                # Tetrimino shapes
+# Tetromino shapes
 TETROMINOES = {
     'I': [
         ['.....',
@@ -35,14 +35,12 @@ TETROMINOES = {
          '..#..',
          '..#..',
          '..#..'],
-
         ['.....',
          '.....',
          '####.',
          '.....',
          '.....']
     ],
-
     'O': [
         ['.....',
          '.....',
@@ -50,7 +48,6 @@ TETROMINOES = {
          '.##..',
          '.....']
     ],
-
     'T': [
         ['.....',
          '.....',
@@ -73,8 +70,7 @@ TETROMINOES = {
          '##...',
          '.#...']
     ],
-
-     'S': [
+    'S': [
         ['.....',
          '.....',
          '.##..',
@@ -86,7 +82,6 @@ TETROMINOES = {
          '..#..',
          '.....']
     ],
-
     'Z': [
         ['.....',
          '.....',
@@ -99,7 +94,6 @@ TETROMINOES = {
          '.#...',
          '.....']
     ],
-
     'J': [
         ['.....',
          '.#...',
@@ -122,7 +116,6 @@ TETROMINOES = {
          '..#..',
          '.....']
     ],
-
     'L': [
         ['.....',
          '..#..',
@@ -145,10 +138,9 @@ TETROMINOES = {
          '###..',
          '.....']
     ]
-
 }
- 
- TETROMINO_COLORS = {
+
+TETROMINO_COLORS = {
     'I': CYAN,
     'O': YELLOW,
     'T': PURPLE,
@@ -189,7 +181,7 @@ class TetrisGame:
         self.fall_time = 0
         self.fall_speed = 500  # milliseconds
         self.game_over = False
-
+        
     def get_new_piece(self):
         shape = random.choice(list(TETROMINOES.keys()))
         return Tetromino(shape, TETROMINO_COLORS[shape])
@@ -215,8 +207,8 @@ class TetrisGame:
             if y >= 0 and self.grid[y][x] != BLACK:
                 valid = False
                 break
-
- # Restore original position and rotation
+                
+        # Restore original position and rotation
         piece.x, piece.y, piece.rotation = old_x, old_y, old_rotation
         return valid
     
@@ -274,7 +266,7 @@ class TetrisGame:
         while self.is_valid_position(self.current_piece, dy=1):
             self.current_piece.y += 1
         self.score += 2
-    
+
 def draw_grid(screen, game):
     # Draw grid background
     grid_rect = pygame.Rect(GRID_X_OFFSET, GRID_Y_OFFSET, 
@@ -290,7 +282,7 @@ def draw_grid(screen, game):
                                  GRID_Y_OFFSET + y * CELL_SIZE + 1,
                                  CELL_SIZE - 2, CELL_SIZE - 2)
                 pygame.draw.rect(screen, game.grid[y][x], rect)
-
+    
     # Draw current piece
     if not game.game_over:
         cells = game.current_piece.get_cells()
@@ -316,6 +308,7 @@ def draw_next_piece(screen, piece):
             if cell == '#':
                 rect = pygame.Rect(next_x + j * 20, next_y + i * 20, 18, 18)
                 pygame.draw.rect(screen, piece.color, rect)
+
 def draw_info(screen, game):
     info_x = GRID_X_OFFSET + GRID_WIDTH * CELL_SIZE + 20
     info_y = GRID_Y_OFFSET + 150
